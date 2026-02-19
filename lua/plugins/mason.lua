@@ -24,7 +24,6 @@ return {
     opts = {
       ensure_installed = {
         "mypy",
-        "black",
       },
       auto_update = false,
     },

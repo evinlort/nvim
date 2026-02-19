@@ -12,10 +12,18 @@ local plugins = {
       vim.lsp.config["ruff"] = {
         -- пусть работает рядом с basedpyright
         init_options = { settings = { args = {} } },
+        on_attach = function(client)
+          client.server_capabilities.documentFormattingProvider = true
+          client.server_capabilities.documentRangeFormattingProvider = true
+        end,
       }
 
       vim.lsp.config["basedpyright"] = {
         capabilities = caps,
+        on_attach = function(client)
+          client.server_capabilities.documentFormattingProvider = false
+          client.server_capabilities.documentRangeFormattingProvider = false
+        end,
         settings = {
           python = {},
           basedpyright = {

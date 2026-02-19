@@ -2,7 +2,7 @@
 
 This repository contains a modular Neovim configuration optimized for Python work:
 - LSP: basedpyright (strict) + ruff
-- Formatting: Black via none-ls
+- Formatting: Ruff via LSP
 - Linting: mypy via nvim-lint
 - Navigation: Telescope + NvimTree + Aerial outline
 - UI: Catppuccin + Lualine + Trouble + Which-key
@@ -138,7 +138,6 @@ All plugins are managed by lazy.nvim via `lua/plugins/*.lua`.
 - `nvim-tree/nvim-web-devicons`
 
 ### Formatting + linting
-- `nvimtools/none-ls.nvim` (Black formatter)
 - `mfussenegger/nvim-lint` (mypy)
 
 ### Git
@@ -189,11 +188,11 @@ Used by:
 - LSP `pythonPath`
 - toggleterm IPython mappings
 
-## Formatting (Black)
+## Formatting (Ruff)
 
-Configured in `lua/plugins/formatting.lua` via none-ls:
-- Black with `prefer_local = ".venv/bin"` and `--line-length=88`
-- Keymap: `<leader>fo` (formats using formatting-capable `null-ls`/`none-ls` client filter)
+Configured in `lua/plugins/formatting.lua` via LSP:
+- Normal mode: `<leader>fo` formats Python buffer via Ruff (`client.name == "ruff"`)
+- Visual mode: `<leader>fo` formats selected Python line range via Ruff
 
 Validation:
 - `bash scripts/validate_formatting.sh`
@@ -261,7 +260,7 @@ Leader key is: `\`
 | `<leader>cs` | Trouble: symbols |
 | `<leader>rn` | Lspsaga: rename |
 | `<leader>ca` | Lspsaga: code action |
-| `<leader>fo` | Format (Black via none-ls) |
+| `<leader>fo` | Format (Ruff LSP; normal=buffer, visual=selection) |
 | `<leader>l` | Run mypy lint now |
 | `<leader>rr` | Refactoring picker (Telescope extension) |
 | `<leader>re` | Refactor: extract function (visual) |
@@ -299,4 +298,4 @@ Recommended/used:
 
 Installed via Mason in this config:
 - LSP servers: `basedpyright`, `ruff`
-- Tools: `black`, `mypy`
+- Tools: `mypy`
