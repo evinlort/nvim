@@ -192,8 +192,11 @@ Used by:
 ## Formatting (Black)
 
 Configured in `lua/plugins/formatting.lua` via none-ls:
-- Black with `--line-length=100`
-- Keymap: `<leader>fo` (formats using client name `"null-ls"`)
+- Black with `prefer_local = ".venv/bin"` and `--line-length=88`
+- Keymap: `<leader>fo` (formats using formatting-capable `null-ls`/`none-ls` client filter)
+
+Validation:
+- `bash scripts/validate_formatting.sh`
 
 ## Linting (mypy)
 
