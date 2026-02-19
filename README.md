@@ -3,7 +3,7 @@
 This repository contains a modular Neovim configuration optimized for Python work:
 - LSP: basedpyright (strict) + ruff
 - Formatting: Ruff via LSP
-- Linting: mypy via nvim-lint
+- Linting: Ruff diagnostics via LSP (nvim-lint on save; Python mypy disabled to avoid duplicates)
 - Navigation: Telescope + NvimTree + Aerial outline
 - UI: Catppuccin + Lualine + Trouble + Which-key
 - Python venv handling: venv-selector + fallback venv search
@@ -138,7 +138,7 @@ All plugins are managed by lazy.nvim via `lua/plugins/*.lua`.
 - `nvim-tree/nvim-web-devicons`
 
 ### Formatting + linting
-- `mfussenegger/nvim-lint` (mypy)
+- `mfussenegger/nvim-lint`
 
 ### Git
 - `lewis6991/gitsigns.nvim`
@@ -200,9 +200,8 @@ Validation:
 ## Linting (mypy)
 
 Configured in `lua/plugins/lint.lua`:
-- Only `mypy` for Python
-- Auto-run on: `BufEnter`, `BufWritePost`
-- Manual trigger: `<leader>l`
+- Python `mypy` is intentionally disabled to avoid overlap with basedpyright type diagnostics
+- Auto-run on: `BufWritePost`
 
 ## Explorer (NvimTree)
 
@@ -261,7 +260,6 @@ Leader key is: `\`
 | `<leader>rn` | Lspsaga: rename |
 | `<leader>ca` | Lspsaga: code action |
 | `<leader>fo` | Format (Ruff LSP; normal=buffer, visual=selection) |
-| `<leader>l` | Run mypy lint now |
 | `<leader>rr` | Refactoring picker (Telescope extension) |
 | `<leader>re` | Refactor: extract function (visual) |
 | `<leader>rv` | Refactor: extract variable |
