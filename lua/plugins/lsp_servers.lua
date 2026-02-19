@@ -8,8 +8,11 @@ local plugins = {
     config = function()
       local python_env = require("core.python_env")
       local caps = require("cmp_nvim_lsp").default_capabilities()
+      caps.general = caps.general or {}
+      caps.general.positionEncodings = { "utf-16" }
 
       vim.lsp.config["ruff"] = {
+        capabilities = caps,
         -- пусть работает рядом с basedpyright
         init_options = { settings = { args = {} } },
         on_attach = function(client)
