@@ -1,3 +1,5 @@
+local M = {}
+
 -- <leader>gh: line history if possible, otherwise fallback to file history across renames
 local function git_root()
   local out = vim.fn.systemlist({ "git", "rev-parse", "--show-toplevel" })
@@ -27,9 +29,10 @@ local function gh_line_or_file_history(start_line, end_line)
 
   local abs = vim.fn.expand("%:p")
   local rel = relpath_from_root(root, abs)
+  local rel_escaped = vim.fn.fnameescape(rel)
 
   local ok = pcall(function()
-    vim.cmd(string.format("Git -C %s log -L %d,%d:%s", root, start_line, end_line, rel))
+    vim.cmd(string.format("Git log -L %d,%d:%s", start_line, end_line, rel_escaped))
   end)
 
   if ok then
@@ -37,74 +40,81 @@ local function gh_line_or_file_history(start_line, end_line)
   end
 
   -- fallback: file history across renames (not line-level)
-  vim.cmd(string.format("Git -C %s log --follow -p -- %s", root, rel))
+  vim.cmd(string.format("Git log --follow -p -- %s", rel_escaped))
 end
 
-return {
-  {
-    "tpope/vim-fugitive",
-    keys = {
-      { "<leader>gb", "<cmd>Git blame<CR>", mode = { "n", "v", "x" }, desc = "Git blame" },
-      -- normal mode
-      {
-        "<leader>gh",
-        function()
-          local line = vim.fn.line(".")
-          gh_line_or_file_history(line, line)
-        end,
-        mode = "n",
-        desc = "Git history (line; fallback file --follow)",
-      },
-      -- visual mode
-      {
-        "<leader>gh",
-        function()
-          local s = vim.fn.line("'<")
-          local e = vim.fn.line("'>")
-          gh_line_or_file_history(s, e)
-        end,
-        mode = "v",
-        desc = "Git history (range; fallback file --follow)",
-      },
+M._test = {
+  git_root = git_root,
+  relpath_from_root = relpath_from_root,
+  gh_line_or_file_history = gh_line_or_file_history,
+}
 
-      -- {
-      --   "<leader>gh",
-      --   function()
-      --     local file = vim.fn.expand("%")
-      --     local line = vim.fn.line(".")
-      --     vim.cmd(string.format(
-      --       "Git log -L %d,%d:%s",
-      --       line,
-      --       line,
-      --       file
-      --     ))
-      --   end,
-      --   mode = "n",
-      --   desc = "Git history of current line",
-      -- },
-      -- {
-      --   "<leader>gh",
-      --   function()
-      --     local file = vim.fn.expand("%")
-      --     local start_line = vim.fn.line("'<")
-      --     local end_line = vim.fn.line("'>")
-      --
-    --       vim.cmd(string.format(
-    --         "Git log -L %d,%d:%s",
-    --         start_line,
-    --         end_line,
-    --         file
-    --       ))
-    --     end,
-    --     mode = "v",
-    --     desc = "Git history of selected block",
-    --   },
+M[1] = {
+  "tpope/vim-fugitive",
+  keys = {
+    { "<leader>gb", "<cmd>Git blame<CR>", mode = { "n", "v", "x" }, desc = "Git blame" },
+    -- normal mode
+    {
+      "<leader>gh",
+      function()
+        local line = vim.fn.line(".")
+        gh_line_or_file_history(line, line)
+      end,
+      mode = "n",
+      desc = "Git history (line; fallback file --follow)",
     },
-  },
-  {
-    "kdheepak/lazygit.nvim",
-    keys = {
-      { "<leader>gl", "<cmd>LazyGit<CR>", mode = { "n", "v", "x" }, desc = "Открыть LazyGit" },
+    -- visual mode
+    {
+      "<leader>gh",
+      function()
+        local s = vim.fn.line("'<")
+        local e = vim.fn.line("'>")
+        gh_line_or_file_history(s, e)
+      end,
+      mode = "v",
+      desc = "Git history (range; fallback file --follow)",
     },
+
+    -- {
+    --   "<leader>gh",
+    --   function()
+    --     local file = vim.fn.expand("%")
+    --     local line = vim.fn.line(".")
+    --     vim.cmd(string.format(
+    --       "Git log -L %d,%d:%s",
+    --       line,
+    --       line,
+    --       file
+    --     ))
+    --   end,
+    --   mode = "n",
+    --   desc = "Git history of current line",
+    -- },
+    -- {
+    --   "<leader>gh",
+    --   function()
+    --     local file = vim.fn.expand("%")
+    --     local start_line = vim.fn.line("'<")
+    --     local end_line = vim.fn.line("'>")
+    --
+  --       vim.cmd(string.format(
+  --         "Git log -L %d,%d:%s",
+  --         start_line,
+  --         end_line,
+  --         file
+  --       ))
+  --     end,
+  --     mode = "v",
+  --     desc = "Git history of selected block",
+  --   },
   },
 }
+
+M[2] = {
+  "kdheepak/lazygit.nvim",
+  keys = {
+    { "<leader>gl", "<cmd>LazyGit<CR>", mode = { "n", "v", "x" }, desc = "Открыть LazyGit" },
+  },
+}
+
+return M
