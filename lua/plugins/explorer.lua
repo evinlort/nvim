@@ -54,6 +54,21 @@ return {
             resize_window = true,
           },
         },
+	filesystem_watchers = {
+	  enable = true,
+	  debounce_delay = 50,
+          ignore_dirs = {
+	    "%.git",
+            "/tags$",
+	    "/home/egrebnev/infinidat/workspace",
+	    "%.claude",
+	    "%.codex",
+	    "node_modules",
+	    "__pycache__",
+	    ".mypy_cache",
+	    ".pytest_cache",
+	  },
+	},
         on_attach = on_attach,
       })
     end,
