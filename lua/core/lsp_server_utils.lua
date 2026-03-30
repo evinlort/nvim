@@ -1,5 +1,14 @@
 local M = {}
 
+local PYTHON_ROOT_MARKERS = {
+  "pyproject.toml",
+  "setup.py",
+  "setup.cfg",
+  "requirements.txt",
+  "Pipfile",
+  ".git",
+}
+
 local function resolve_startpath(root_dir, bufnr)
   if root_dir and root_dir ~= "" then
     return root_dir
@@ -19,11 +28,11 @@ local function resolve_root_dir(root_dir, bufnr)
   if not startpath then
     return nil
   end
-  local root_marker = vim.fs.find({ "pyproject.toml", ".git" }, { upward = true, path = startpath })[1]
+  local root_marker = vim.fs.find(PYTHON_ROOT_MARKERS, { upward = true, path = startpath })[1]
   if root_marker then
     return vim.fs.dirname(root_marker)
   end
-  return nil
+  return startpath
 end
 
 local function resolve_extra_paths(root_dir, bufnr)
@@ -63,5 +72,6 @@ M.resolve_root_dir = resolve_root_dir
 M.resolve_extra_paths = resolve_extra_paths
 M.resolve_python_path = resolve_python_path
 M.debug_python_roots = debug_python_roots
+M.python_root_markers = PYTHON_ROOT_MARKERS
 
 return M

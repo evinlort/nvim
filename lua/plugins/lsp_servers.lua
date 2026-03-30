@@ -27,6 +27,7 @@ local plugins = {
           client.server_capabilities.documentFormattingProvider = false
           client.server_capabilities.documentRangeFormattingProvider = false
         end,
+        root_markers = lsp_utils.python_root_markers,
         settings = {
           python = {},
           basedpyright = {
@@ -58,6 +59,16 @@ local plugins = {
           new_config.settings.basedpyright.analysis.extraPaths = extra_paths
         end,
       }
+
+      if vim.fn.exepath("basedpyright-langserver") == "" then
+        vim.schedule(function()
+          vim.notify(
+            "basedpyright-langserver is not installed or not on PATH; Python LSP will not start.",
+            vim.log.levels.WARN,
+            { title = "LSP" }
+          )
+        end)
+      end
 
       vim.lsp.enable("basedpyright")
       vim.lsp.enable("ruff")

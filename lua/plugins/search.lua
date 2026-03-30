@@ -3,15 +3,20 @@ return {
   -- Telescope: поиск
   { "nvim-telescope/telescope.nvim",
     tag = "0.1.8",  -- Версия (Lua: tag string)
+    dependencies = { "jmacadie/telescope-hierarchy.nvim" },
     keys = {
       { "<leader><space>", "<cmd>Telescope find_files<CR>", desc = "Find files" },
       { "<leader>ff", "<cmd>Telescope find_files<CR>", desc = "Find files" },
       { "<leader>fg", "<cmd>Telescope live_grep<CR>", desc = "Live grep" },
       { "<leader>fb", "<cmd>Telescope buffers<CR>", desc = "Buffers" },
+      { "<leader>si", "<cmd>Telescope hierarchy incoming_calls<CR>", desc = "LSP: search incoming calls" },
+      { "<leader>so", "<cmd>Telescope hierarchy outgoing_calls<CR>", desc = "LSP: search outgoing calls" },
     },
     config = function()
       local actions = require("telescope.actions")
-      require("telescope").setup({
+      local telescope = require("telescope")
+
+      telescope.setup({
         defaults = {
           mappings = {
             i = {
@@ -22,7 +27,13 @@ return {
             },
           },
         },
+        extensions = {
+          hierarchy = {
+            layout_strategy = "horizontal",
+          },
+        },
       })
+      telescope.load_extension("hierarchy")
     end,
   },
 }
