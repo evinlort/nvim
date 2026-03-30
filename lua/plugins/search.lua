@@ -96,8 +96,13 @@ return {
         for _, line in ipairs(vim.split(output or "", "\n", { trimempty = true })) do
           local ok, match = pcall(vim.json.decode, line)
           if ok and match and match.file and match.range and match.range.start then
+            local filename = match.file
+            if not filename:match("^/") then
+              filename = vim.fs.joinpath(root, filename)
+            end
+
             items[#items + 1] = {
-              filename = vim.fs.normalize(vim.fs.joinpath(root, match.file)),
+              filename = vim.fs.normalize(filename),
               lnum = match.range.start.line + 1,
               col = match.range.start.column + 1,
               text = match.lines or match.text or pattern,
