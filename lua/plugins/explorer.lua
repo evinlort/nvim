@@ -60,7 +60,6 @@ return {
           ignore_dirs = {
 	    "%.git",
             "/tags$",
-	    "/home/egrebnev/infinidat/workspace",
 	    "%.claude",
 	    "%.codex",
 	    "node_modules",
