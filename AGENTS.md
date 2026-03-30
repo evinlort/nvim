@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-This repository is a modular Neovim configuration for Neovim 0.11+. `init.lua` is the entrypoint and loads `lua/core/*.lua` first for options, leader keys, autocommands, diagnostics, and lazy.nvim bootstrap. Plugin specs live in `lua/plugins/*.lua` and are aggregated by [`lua/plugins/init.lua`](/home/egrebnev/.config/nvim/lua/plugins/init.lua). Snippets live in `lua/snippets/`. Tests are under `tests/unit` and `tests/integration`, with a minimal harness in [`tests/minimal_init.lua`](/home/egrebnev/.config/nvim/tests/minimal_init.lua).
+This repository is a modular Neovim configuration for Neovim 0.11+. `init.lua` is the entrypoint and loads `lua/core/*.lua` first for options, leader keys, autocommands, diagnostics, and lazy.nvim bootstrap. Plugin specs live in `lua/plugins/*.lua` and are aggregated by `lua/plugins/init.lua`. Snippets live in `lua/snippets/`. Tests are under `tests/unit` and `tests/integration`, with a minimal harness in `tests/minimal_init.lua`.
 
 ## Build, Test, and Development Commands
 Run Neovim with this config via `nvim`. Install or update plugins with `:Lazy sync` inside Neovim. Execute the test suite with `bash tests/run.sh`; it runs Plenary unit tests and the Git integration script in headless Neovim. When working on tests locally, set `PLENARY_PATH` and `FUGITIVE_PATH` if your plugins are not under `~/.local/share/nvim/lazy/`.
