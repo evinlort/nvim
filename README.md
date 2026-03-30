@@ -17,6 +17,8 @@ Modular Neovim 0.11+ configuration rooted at `~/.config/nvim`, with a strong Pyt
 - Neovim `0.11+`
 - `git`
 - `python3`
+- Python package installer such as `pipx` or `python3-pip`
+- C build tools such as `gcc` and `make` for Treesitter parser builds
 
 ### Recommended CLI tools
 
@@ -37,6 +39,58 @@ This config expects the following Python tooling to be available through Mason o
 `basedpyright-langserver` is required for Python LSP. The config warns at runtime if it is not on `PATH`.
 
 ## Installation
+
+### Install system packages
+
+At minimum, install:
+
+- Neovim `0.11+`
+- `git`
+- `python3`
+- `pipx` or `python3-pip`
+- `gcc`
+- `make`
+
+Recommended additions for the full workflow:
+
+- `ripgrep`
+- `ast-grep`
+- Universal `ctags`
+- `ipython`
+- `lazygit`
+- `npm`
+
+### Suggested install methods
+
+For Ubuntu or Debian, a practical baseline is:
+
+```bash
+sudo apt install git python3 python3-pip python3-venv gcc make ripgrep universal-ctags npm
+sudo snap install nvim --classic
+sudo snap install astral-uv --classic
+sudo snap install lazygit --classic
+```
+
+Then install the Python-side tools expected by this config:
+
+```bash
+pipx install basedpyright
+pipx install ruff
+pipx install mypy
+pipx install ipython
+```
+
+Alternative installs:
+
+- `ast-grep`: `cargo install ast-grep` or `npm install -g @ast-grep/cli`
+- `lazygit`: upstream release tarball if your distro package is too old
+- Neovim: AppImage or upstream package if your distro repository does not provide `0.11+`
+
+If you use `pipx`, ensure its bin directory is on `PATH`:
+
+```bash
+pipx ensurepath
+```
 
 Clone directly into Neovim's config directory:
 
