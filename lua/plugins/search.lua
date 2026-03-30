@@ -13,7 +13,6 @@ return {
       { "<leader>sa", "<cmd>AstGrepSymbol<CR>", desc = "AstGrep: search word under cursor" },
       { "<leader>si", "<cmd>Telescope hierarchy incoming_calls<CR>", desc = "LSP: search incoming calls" },
       { "<leader>so", "<cmd>Telescope hierarchy outgoing_calls<CR>", desc = "LSP: search outgoing calls" },
-      { "<leader>ss", "<cmd>AstGrepSymbol<CR>", desc = "AstGrep: search symbol under cursor" },
       { "<leader>sp", "<cmd>AstGrepSymbolPrompt<CR>", desc = "AstGrep: prompt from symbol under cursor" },
     },
     config = function()
@@ -50,6 +49,24 @@ return {
 
       local function ast_grep_root()
         return lsp_utils.resolve_root_dir(nil, 0) or vim.loop.cwd()
+      end
+
+      local function ast_grep_context()
+        if vim.fn.exepath("ast-grep") == "" then
+          notify("ast-grep CLI is not installed or not on PATH.", vim.log.levels.WARN)
+          return nil
+        end
+
+        local lang = ast_grep_lang()
+        if not lang then
+          notify(string.format("AstGrep does not support filetype '%s' in this config.", vim.bo.filetype), vim.log.levels.WARN)
+          return nil
+        end
+
+        return {
+          lang = lang,
+          root = ast_grep_root(),
+        }
       end
 
       local function current_symbol()
@@ -106,25 +123,21 @@ return {
           return
         end
 
-        if vim.fn.exepath("ast-grep") == "" then
-          notify("ast-grep CLI is not installed or not on PATH.", vim.log.levels.WARN)
+        local context = ast_grep_context()
+        if not context then
           return
         end
 
-        local lang = ast_grep_lang()
-        if not lang then
-          notify(string.format("AstGrep does not support filetype '%s' in this config.", vim.bo.filetype), vim.log.levels.WARN)
-          return
-        end
+        vim.system(ast_grep_command(pattern, context.root, context.lang), { text = true }, function(result)
+          vim.schedule(function()
+            if result.code ~= 0 and result.code ~= 1 then
+              notify(result.stderr ~= "" and result.stderr or "ast-grep failed.", vim.log.levels.ERROR)
+              return
+            end
 
-        local root = ast_grep_root()
-        local result = vim.system(ast_grep_command(pattern, root, lang), { text = true }):wait()
-        if result.code ~= 0 and result.code ~= 1 then
-          notify(result.stderr ~= "" and result.stderr or "ast-grep failed.", vim.log.levels.ERROR)
-          return
-        end
-
-        populate_quickfix(pattern, root, result.stdout)
+            populate_quickfix(pattern, context.root, result.stdout)
+          end)
+        end)
       end
 
       local function ast_grep_prompt(opts)
