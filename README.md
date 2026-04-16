@@ -132,6 +132,7 @@ Start Neovim once to let `lazy.nvim` bootstrap itself. Then install plugins:
 - `lua/core/diagnostic_config.lua`: global diagnostic window behavior
 - `lua/core/python_env.lua`: Python, IPython, and venv resolution
 - `lua/core/lsp_server_utils.lua`: Python root markers, `src/` discovery, and LSP path helpers
+- `lua/core/project_root.lua`: explicit tab-local project root selection for NvimTree and LazyGit
 - `lua/core/lazy.lua`: lazy.nvim bootstrap and plugin aggregation
 
 ### Plugin modules
@@ -249,6 +250,17 @@ Behavior:
 - `<leader>fe`: toggle NvimTree
 - `<leader>ef`: reveal current file in NvimTree
 
+NvimTree is configured with `actions.change_dir.enable = false`, so browsing parent or child folders does not silently rewrite Vim cwd. Inside the tree, `gr` sets the active project root from the selected node for the current tab only.
+
+Active project root rules:
+
+1. directory node: start from that directory
+2. file node: start from the parent directory
+3. nearest git root wins when available
+4. otherwise the selected directory is used
+
+The selected root is stored in `vim.t.active_project_root`, applies `:tcd` for the current tab, and updates the visible NvimTree root.
+
 ## LSP and Editing Keymaps
 
 Leader key is `\`.
@@ -295,7 +307,7 @@ Leader key is `\`.
 - `<leader>gh`: line history in normal mode, range history in visual mode, with fallback to file history when line history fails
 - `<leader>gp`: inline hunk preview
 - `<leader>gB`: toggle current-line blame
-- `<leader>gl`: open LazyGit
+- `<leader>gl`: open LazyGit using active project root, then current file git root, then tab cwd
 
 The custom Fugitive helper in `lua/plugins/git-tools.lua` avoids `git -C` in the generated Fugitive command and falls back to `git log --follow -p -- <file>` when `-L` fails.
 
