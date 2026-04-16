@@ -113,7 +113,14 @@ M[1] = {
 M[2] = {
   "kdheepak/lazygit.nvim",
   keys = {
-    { "<leader>gl", "<cmd>LazyGit<CR>", mode = { "n", "v", "x" }, desc = "Открыть LazyGit" },
+    {
+      "<leader>gl",
+      function()
+        require("core.project_root").open_lazygit()
+      end,
+      mode = { "n", "v", "x" },
+      desc = "Открыть LazyGit",
+    },
   },
 }
 

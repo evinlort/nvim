@@ -27,6 +27,7 @@ This repository contains a modular Neovim configuration optimized for Python wor
     |   |-- lsp_server_utils.lua
     |   |-- lsp_utils.lua
     |   |-- options.lua
+    |   |-- project_root.lua
     |   |-- python_env.lua
     |   |-- python_host.lua
     |   `-- venv_selector_adapter.lua
@@ -87,6 +88,8 @@ This repository contains a modular Neovim configuration optimized for Python wor
 
 ### Leader (`lua/core/leader.lua`)
 - Leader key: `\`
+- Leader mappings are grouped by plugin in `lua/plugins/*.lua` and surfaced by which-key.
+- NvimTree also has buffer-local mappings that only work while focus is inside the explorer.
 
 ### Autocommands (`lua/core/autocmds.lua`)
 - clears search highlight ~2 seconds after leaving `/` or `?` search
@@ -210,12 +213,28 @@ Configured in `lua/plugins/explorer.lua`:
 - dotfiles shown
 - git integration enabled
 - does not quit on open
+- NvimTree root navigation does not rewrite Vim cwd; `actions.change_dir.enable = false` prevents silent root drift
+- active project root is explicit and tab-local via `vim.t.active_project_root`
+- selecting an active project root runs `:tcd` for the current tab only, updates the NvimTree root, and leaves it stable until changed explicitly
 - buffer-local mappings in NvimTree:
   - `t` / `<CR>` open node in a new tab
   - `c` create file
   - `r` rename
   - `d` delete
+  - `gr` set active project root from the selected node
   - `<2-LeftMouse>` open by double-click (tab)
+
+### Active project root
+
+Use `gr` inside NvimTree when the cursor is on the project you want to work in.
+
+Root selection rules:
+1. directory node: start from that directory
+2. file node: start from the parent directory
+3. nearest git root wins when available
+4. otherwise the selected directory is used
+
+LazyGit uses the active project root first, then the current file's git root, then the current tab cwd. Browsing upward or downward in NvimTree does not change the active project root.
 
 ## Telescope
 
@@ -250,6 +269,10 @@ Leader key is: `\`
 | `<leader>ff` | Telescope: find files |
 | `<leader>fg` | Telescope: live grep |
 | `<leader>fb` | Telescope: buffers |
+| `<leader>sa` | AstGrep: search word under cursor |
+| `<leader>si` | Telescope hierarchy: incoming calls |
+| `<leader>so` | Telescope hierarchy: outgoing calls |
+| `<leader>sp` | AstGrep: prompt from symbol under cursor |
 | `<leader>e` | NvimTree: toggle |
 | `<leader>fe` | NvimTree: toggle |
 | `<leader>ef` | NvimTree: open + focus current file |
@@ -265,8 +288,9 @@ Leader key is: `\`
 | `<leader>rv` | Refactor: extract variable |
 | `<leader>gb` | Git blame (fugitive) |
 | `<leader>gh` | Git log for current line / selection (fugitive) |
-| `<leader>gl` | LazyGit |
+| `<leader>gl` | LazyGit using active project root, current file git root, then tab cwd |
 | `<leader>gp` | Gitsigns: preview hunk inline |
+| `<leader>gB` | Gitsigns: toggle inline current-line blame |
 | `<leader>pf` | IPython in floating terminal |
 | `<leader>pv` | IPython in vertical terminal (size 55) |
 | `<leader>t` | IPython in horizontal terminal (size 20) |

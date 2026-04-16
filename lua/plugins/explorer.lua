@@ -19,6 +19,7 @@ return {
     config = function()
       local function on_attach(bufnr)
         local api = require("nvim-tree.api")
+        local project_root = require("core.project_root")
 	api.config.mappings.default_on_attach(bufnr)
         local function map(lhs, rhs, desc)
           vim.keymap.set("n", lhs, rhs, { buffer = bufnr, noremap = true, silent = true, desc = desc })
@@ -33,6 +34,8 @@ return {
         map("r", api.fs.rename, "Переименовать файл")
         -- Delete the file
         map("d", api.fs.remove, "Удалить файл")
+        -- Set active project root explicitly for this tab
+        map("gr", project_root.set_active_from_nvim_tree_node, "Set active project root")
         -- Open folder by double-click
         map("<2-LeftMouse>", api.node.open.tab, "Открыть папку/файл двойным кликом")
       end
@@ -49,6 +52,9 @@ return {
           ignore = false,
         },
         actions = {
+          change_dir = {
+            enable = false,
+          },
           open_file = {
             quit_on_open = false,
             resize_window = true,
